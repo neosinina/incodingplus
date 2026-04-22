@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="디미고 입시 전문 학원 인코딩플러스 - 10년간 212명 합격, 코딩·논술·스피치로 AI 시대 기획형 인재를 키웁니다.">
+<title>인코딩플러스 | 디미고 입시 전문 IT 아카데미</title>
+<style>
+/* ══════════════════════════════════════════════
+   폰트: Noto Sans KR (시스템 폰트 우선, fallback)
+══════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════
+   CSS 변수 (색상 토큰)
+══════════════════════════════════════════════ */
+:root {
+  --bg:      #040c18;
+  --bg2:     #060e1c;
+  --cyan:    #00d4ff;
+  --cyan2:   #38bdf8;
+  --cyan3:   #7dd3fc;
+  --purple:  #a855f7;
+  --purple2: #c084fc;
+  --blue:    #3b82f6;
+  --white:   #ffffff;
+  --font:    'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-en: 'Courier New', 'Courier', monospace;
+}
+
+/* ══════════════════════════════════════════════
+   리셋 & 기본
+══════════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--font); }
+img { display: block; }
+
+/* ══════════════════════════════════════════════
+   홀로그램 박스 공통
+   평상시: 얇은 어두운 테두리
+   호버시: 시안+흰색+퍼플 conic 회전 테두리 활성화
+══════════════════════════════════════════════ */
+@property --holo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes holoSpin { to { --holo-angle: 360deg; } }
+@keyframes holoSheen {
+  0%,100% { background-position: 0% 0%; }
+  50%      { background-position: 100% 100%; }
+}
+
+.holo-box {
+  position: relative;
+  border-radius: 18px;
+  isolation: isolate;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform .35s ease, border-color .3s ease;
+}
+
+/* 호버 전: before 숨김 */
+.holo-box::before {
+  content: '';
+  position: absolute; inset: -1.5px; border-radius: 20px; z-index: 0;
+  /* rotate() 방식 — @property 없이도 각 요소가 독립 동작 */
+  background: conic-gradient(
+    from var(--holo-angle),
+    #00d4ff, #ffffff, #a855f7, #3b82f6, #ffffff, #00ffcc, #a855f7, #00d4ff
+  );
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.holo-box > .holo-inner {
+  position: relative; z-index: 1;
+  background: var(--bg2);
+  border-radius: 16px;
+  margin: 1.5px;
+}
+.holo-box > .holo-inner::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 16px;
+  background: linear-gradient(135deg,
+    rgba(0,212,255,0.08) 0%, rgba(255,255,255,0.04) 30%,
+    rgba(168,85,247,0.06) 60%, rgba(0,255,204,0.08) 100%
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity .4s ease;
+  animation: holoSheen 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 호버: 각 요소가 자체 --holo-angle 애니메이션 실행 */
+.holo-box:hover {
+  border-color: transparent;
+  transform: translateY(-5px);
+}
+.holo-box:hover::before {
+  opacity: 1;
+  animation: holoSpin 2s linear infinite;
+  /* 각 박스마다 시작 각도 다르게 → nth-child로 지정 */
+}
+.holo-box:hover > .holo-inner::after { opacity: 1; }
+
+/* ── 자동 순차 활성화 클래스 (JS에서 부착) ── */
+.holo-box.holo-glow {
+  border-color: transparent;
+}
+.holo-box.holo-glow::before {
+  opacity: 1;
+  animation: holoSpin 2s linear infinite;
+}
+.holo-box.holo-glow > .holo-inner::after { opacity: 1; }
+
+/* 카드별 홀로그램 색상 */
+.ic1:hover::before { background: conic-gradient(from var(--holo-angle), #00d4ff,#fff,#3b82f6,#00ffcc,#fff,#00d4ff); }
+.ic2:hover::before { background: conic-gradient(from var(--holo-angle), #a855f7,#fff,#00d4ff,#c084fc,#fff,#a855f7); }
+.ic3:hover::before { background: conic-gradient(from var(--holo-angle), #7dd3fc,#fff,#a855f7,#38bdf8,#fff,#7dd3fc); }
+
+/* 모든 holo-box::before가 독립 회전하도록 animation-delay 분산
+   → 5,6번째 박스도 1~4번과 동일한 테두리 표시 보장 */
+.holo-box:nth-child(1):hover::before { animation-delay:  0s;   }
+.holo-box:nth-child(2):hover::before { animation-delay: -0.33s; }
+.holo-box:nth-child(3):hover::before { animation-delay: -0.66s; }
+.holo-box:nth-child(4):hover::before { animation-delay: -1.0s; }
+.holo-box:nth-child(5):hover::before { animation-delay: -1.33s; }
+.holo-box:nth-child(6):hover::before { animation-delay: -1.66s; }
+
+/* ══════════════════════════════════════════════
+   공통 버튼
+══════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  color: #fff; border: none; padding: 14px 34px; border-radius: 32px;
+  font-size: .97rem; font-weight: 700;
+  box-shadow: 0 4px 24px rgba(0,212,255,.4);
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 36px rgba(0,212,255,.6); }
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--cyan3);
+  border: 1.5px solid rgba(0,212,255,.6); padding: 14px 34px; border-radius: 32px;
+  font-size: .97rem; font-weight: 700;
+  transition: background .2s, border-color .2s;
+}
+.btn-secondary:hover { background: rgba(0,212,255,.1); border-color: var(--cyan); }
+
+/* ══════════════════════════════════════════════
+   공통 섹션
+══════════════════════════════════════════════ */
+section { padding: 90px 6%; }
+.section-label {
+  font-size: .72rem; font-weight: 700; letter-spacing: 3px;
+  color: var(--cyan); text-transform: uppercase; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(1.7rem,3vw,2.5rem); font-weight: 900; line-height: 1.22;
+  color: #fff; margin-bottom: 16px;
+}
+.section-desc { color: rgba(255,255,255,.65); line-height: 1.85; max-width: 560px; }
+.divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(0,212,255,.25),transparent); margin: 0 6%; }
+
+/* ══════════════════════════════════════════════
+   파티클
+══════════════════════════════════════════════ */
+@keyframes floatDot {
+  0%   { opacity:0;   transform:translateY(0) scale(0); }
+  15%  { opacity:.6;  transform:translateY(-20px) scale(1); }
+  80%  { opacity:.3;  transform:translateY(-130px) scale(.8); }
+  100% { opacity:0;   transform:translateY(-190px) scale(0); }
+}
+.holo-dot {
+  position: fixed; border-radius: 50%;
+  pointer-events: none; z-index: 0; opacity: 0;
+  animation: floatDot linear infinite;
+}
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 500;
+  background: rgba(4,12,24,0.97);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(0,212,255,.18);
+  padding: 0 6%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-en); font-size: 1.1rem; font-weight: 900;
+  background: linear-gradient(90deg, var(--cyan), var(--purple2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  filter: drop-shadow(0 0 8px rgba(0,212,255,.5));
+}
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a {
+  color: rgba(255,255,255,.75); font-size: .88rem; font-weight: 600;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  color: #fff; border: none; padding: 9px 22px; border-radius: 24px;
+  font-size: .84rem; font-weight: 700;
+  box-shadow: 0 0 20px rgba(0,212,255,.4);
+  transition: transform .2s, box-shadow .2s;
+}
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(0,212,255,.65); }
+/* 햄버거 (모바일) */
+.nav-hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; padding:4px; }
+.nav-hamburger span { display:block; width:24px; height:2px; background:rgba(255,255,255,.8); border-radius:2px; transition:.3s; }
+.nav-mobile { display:none; }
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh; display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  padding: 110px 6% 70px;
+  background:
+    radial-gradient(ellipse at 70% 35%, rgba(59,130,246,.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 75%, rgba(168,85,247,.08) 0%, transparent 48%),
+    var(--bg);
+}
+/* 격자 배경 */
+#hero::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 28s linear infinite;
+}
+@keyframes gridMove { from{transform:translateY(0)} to{transform:translateY(60px)} }
+
+/* 빛 orb */
+.orb { position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none; }
+.orb1 { width:500px;height:500px; background:var(--blue);   opacity:.1; top:-100px; right:-60px; animation:orbPulse 8s ease-in-out infinite; }
+.orb2 { width:340px;height:340px; background:var(--purple); opacity:.09; bottom:-40px; left:-40px; animation:orbPulse 10s ease-in-out infinite reverse; }
+.orb3 { width:220px;height:220px; background:var(--cyan);   opacity:.07; top:40%; left:42%; animation:orbPulse 6s ease-in-out infinite 2s; }
+@keyframes orbPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+.hero-content { position: relative; z-index: 2; max-width: 620px; }
+
+/* badge */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.4);
+  border-radius: 20px; padding: 7px 18px;
+  font-size: .8rem; color: var(--cyan3); font-weight: 700; letter-spacing: 1px;
+  margin-bottom: 26px;
+  animation: fadeUp .8s ease both;
+}
+.hero-badge::before { content:'●'; font-size:.5rem; color:var(--cyan); animation:blink 1.5s infinite; }
+
+/* 타이틀 */
+@keyframes shimmer { from{background-position:0%} to{background-position:200%} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.hero-title {
+  font-size: clamp(2.3rem,5vw,3.6rem); font-weight: 900; line-height: 1.15;
+  color: #fff; margin-bottom: 16px;
+  animation: fadeUp .8s ease .1s both;
+}
+.hero-title .hl {
+  background: linear-gradient(90deg, var(--cyan), var(--purple2), var(--cyan3));
+  background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(0,212,255,.5));
+}
+.hero-sub {
+  font-size: 1.05rem; color: rgba(255,255,255,.75);
+  margin-bottom: 40px; line-height: 1.85;
+  animation: fadeUp .8s ease .2s both;
+}
+
+/* 통계 카드 */
+.hero-stats { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:44px; animation:fadeUp .8s ease .3s both; }
+.stat-card {
+  flex:1; min-width:180px; text-align:center;
+  position:relative; border-radius:16px; isolation:isolate; overflow:hidden;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.1);
+  transition: transform .35s, border-color .4s, box-shadow .4s;
+}
+
+/* conic 홀로그램 테두리 레이어 */
+.stat-card::before {
+  content:''; position:absolute; inset:-1.5px; z-index:0; border-radius:18px;
+  background: conic-gradient(
+    from var(--holo-angle),
+    #00d4ff, #ffffff, #a855f7, #3b82f6, #ffffff, #00ffcc, #a855f7, #00d4ff
+  );
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+/* 내부 마스크 */
+.stat-card::after {
+  content:''; position:absolute; inset:1.5px; z-index:1; border-radius:15px;
+  background: rgba(4,12,24,.95);
+  pointer-events: none;
+}
+
+/* 호버 활성화 */
+.stat-card:hover {
+  transform: translateY(-6px);
+  border-color: transparent;
+}
+.stat-card:hover::before {
+  opacity: 1;
+  animation: holoSpin 2s linear infinite;
+}
+
+/* 자동 순차 활성화 클래스 */
+.stat-card.holo-glow {
+  border-color: transparent;
+}
+.stat-card.holo-glow::before {
+  opacity: 1;
+  animation: holoSpin 2s linear infinite;
+}
+
+/* 두 번째 카드 delay */
+.stat-card:nth-child(2)::before { animation-delay: -1s; }
+
+.stat-inner {
+  position:relative; z-index:2; padding:26px 36px;
+  background: linear-gradient(160deg, rgba(0,212,255,.05) 0%, rgba(168,85,247,.03) 50%, rgba(59,130,246,.05) 100%);
+  border-radius: 15px;
+}
+.stat-num {
+  font-family: var(--font-en); font-size: 2.6rem; font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0,212,255,.6), 0 0 40px rgba(0,212,255,.25);
+  line-height: 1;
+}
+.stat-num .unit { font-size: 1.2rem; font-weight: 700; }
+.stat-label { font-size: .8rem; color: rgba(255,255,255,.6); margin-top: 8px; font-weight: 500; letter-spacing: .5px; }
+
+/* 버튼 행 */
+.hero-btns { display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp .8s ease .4s both; }
+
+/* IT 비주얼 */
+.hero-visual {
+  position: absolute; right: 0%; top: 50%; transform: translateY(-50%);
+  z-index: 2; width: 520px; height: 520px;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+@keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes spinRev  { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+@keyframes pulseR   { 0%,100%{r:54} 50%{r:60} }
+@keyframes dashFlow { to{stroke-dashoffset:-200} }
+@keyframes nodePulse{ 0%,100%{opacity:.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+@keyframes scanLine { 0%{transform:translateY(-180px);opacity:0} 20%{opacity:.6} 80%{opacity:.4} 100%{transform:translateY(180px);opacity:0} }
+
+/* 노드 4개: 중심(0,0) → 바깥 목표 위치 왕복 */
+/* AI: (148,110) 방향 */
+@keyframes nodeOrbit1 {
+  0%,100% { transform: translate(148px, 110px); opacity:1; }
+  40%,60% { transform: translate(0px, 0px);     opacity:0.3; }
+}
+/* 코딩: (-148,-112) 방향 */
+@keyframes nodeOrbit2 {
+  0%,100% { transform: translate(-148px, -112px); opacity:1; }
+  40%,60% { transform: translate(0px, 0px);       opacity:0.3; }
+}
+/* DATA: (95,-148) 방향 */
+@keyframes nodeOrbit3 {
+  0%,100% { transform: translate(95px, -148px); opacity:1; }
+  40%,60% { transform: translate(0px, 0px);     opacity:0.3; }
+}
+/* IT독서: (-158,72) 방향 */
+@keyframes nodeOrbit4 {
+  0%,100% { transform: translate(-158px, 72px); opacity:1; }
+  40%,60% { transform: translate(0px, 0px);     opacity:0.3; }
+}
+
+.hero-visual svg { width:100%; height:100%; overflow:visible; animation: float 5s ease-in-out infinite; }
+
+/* ══════════════════════════════════════════════
+   ABOUT US
+══════════════════════════════════════════════ */
+#intro { background: var(--bg2); }
+.intro-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:48px; }
+.intro-card > .holo-inner { padding:34px 26px; }
+.card-icon { font-size:2.4rem; margin-bottom:16px; }
+.card-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:10px; }
+.card-text { font-size:.88rem; color:rgba(255,255,255,.72); line-height:1.75; }
+
+/* ══════════════════════════════════════════════
+   DIMIGO PREP
+══════════════════════════════════════════════ */
+#exam { background: var(--bg); }
+.exam-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.exam-card > .holo-inner { padding:30px 28px; }
+.exam-card-title {
+  font-size:1.05rem; font-weight:800; color:#fff;
+  margin-bottom:18px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,212,255,.15);
+  display:flex; align-items:center; gap:10px;
+}
+.exam-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:11px 0; border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:.9rem; color:rgba(255,255,255,.8); line-height:1.5;
+}
+.exam-item:last-child { border-bottom:none; }
+.check { color:var(--cyan); font-weight:800; flex-shrink:0; }
+
+/* ══════════════════════════════════════════════
+   CURRICULUM — 세로 타임라인
+══════════════════════════════════════════════ */
+#course { background: var(--bg2); }
+.timeline { display:flex; flex-direction:column; margin-top:48px; max-width:760px; position:relative; }
+.timeline::before {
+  content:''; position:absolute; left:28px; top:30px; bottom:30px; width:2px; z-index:0;
+  background: linear-gradient(180deg, var(--cyan) 0%, var(--purple) 40%, var(--cyan2) 70%, var(--cyan3) 100%);
+  animation: linePulse 2s ease-in-out infinite;
+}
+@keyframes linePulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+.tl-item { display:flex; gap:24px; align-items:flex-start; padding:0 0 26px 0; position:relative; z-index:1; }
+.tl-item:last-child { padding-bottom:0; }
+.tl-dot {
+  width:58px; height:58px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-en); font-size:.9rem; font-weight:900;
+  background:var(--bg2); border:2px solid; z-index:2;
+  transition: box-shadow .35s, transform .35s;
+}
+.t1 .tl-dot { border-color:var(--cyan);    color:var(--cyan); }
+.t2 .tl-dot { border-color:var(--purple2); color:var(--purple2); }
+.t3 .tl-dot { border-color:var(--cyan2);   color:var(--cyan2); }
+.t4 .tl-dot { border-color:var(--cyan3);   color:var(--cyan3); }
+.tl-item:hover .tl-dot       { box-shadow:0 0 24px rgba(0,212,255,.7);   transform:scale(1.12); }
+.t2:hover .tl-dot             { box-shadow:0 0 24px rgba(168,85,247,.7); }
+.t3:hover .tl-dot             { box-shadow:0 0 24px rgba(56,189,248,.7); }
+.t4:hover .tl-dot             { box-shadow:0 0 24px rgba(125,211,252,.7); }
+.tl-card { flex:1; overflow:hidden; border-radius:18px; }
+.tl-card > .holo-inner { padding:24px 28px; transition:transform .3s; }
+.tl-item:hover .tl-card > .holo-inner { transform:translateX(6px); }
+.tl-grade { font-size:.74rem; font-weight:700; letter-spacing:1px; margin-bottom:6px; text-transform:uppercase; }
+.t1 .tl-grade{color:var(--cyan);} .t2 .tl-grade{color:var(--purple2);} .t3 .tl-grade{color:var(--cyan2);} .t4 .tl-grade{color:var(--cyan3);}
+.tl-name { font-size:1.15rem; font-weight:900; color:#fff; margin-bottom:8px; }
+.tl-desc { font-size:.88rem; color:rgba(255,255,255,.72); line-height:1.75; }
+
+/* ══════════════════════════════════════════════
+   WHY US
+══════════════════════════════════════════════ */
+#features { background: var(--bg); }
+.features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:48px; }
+.feature-item { border-radius:18px; }
+.feature-item > .holo-inner { display:flex; gap:16px; align-items:flex-start; padding:24px 22px; }
+.feature-icon {
+  width:46px; height:46px; border-radius:12px; flex-shrink:0;
+  background:rgba(0,212,255,.08); border:1px solid rgba(0,212,255,.25);
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  transition: background .3s, border-color .3s, box-shadow .3s;
+}
+.feature-item:hover .feature-icon { background:rgba(0,212,255,.2); border-color:var(--cyan); box-shadow:0 0 16px rgba(0,212,255,.3); }
+
+/* 각 박스마다 holoSpin 시작점 다르게 → 동일한 회전 테두리 보장 */
+.features-grid .holo-box:nth-child(1):hover::before { animation-delay: 0s; }
+.features-grid .holo-box:nth-child(2):hover::before { animation-delay: -0.5s; }
+.features-grid .holo-box:nth-child(3):hover::before { animation-delay: -1s; }
+.features-grid .holo-box:nth-child(4):hover::before { animation-delay: -1.5s; }
+.features-grid .holo-box:nth-child(5):hover::before { animation-delay: -2s; }
+.features-grid .holo-box:nth-child(6):hover::before { animation-delay: -2.5s; }
+.feature-title { font-size:.92rem; font-weight:800; color:#fff; margin-bottom:6px; }
+.feature-desc { font-size:.82rem; color:rgba(255,255,255,.65); line-height:1.65; }
+
+/* ══════════════════════════════════════════════
+   CTA
+══════════════════════════════════════════════ */
+#cta { background:var(--bg2); text-align:center; padding:100px 6%; }
+.cta-box { max-width:680px; margin:0 auto; border-radius:24px; }
+.cta-box > .holo-inner { padding:54px 46px; position:relative; }
+.cta-box > .holo-inner::before {
+  content:''; position:absolute; inset:0; border-radius:16px;
+  background:radial-gradient(ellipse at 50% 0%, rgba(0,212,255,.1), transparent 65%);
+  pointer-events:none;
+}
+.cta-box > .holo-inner > * { position:relative; z-index:1; }
+.cta-title { font-size:2rem; font-weight:900; color:#fff; margin-bottom:12px; }
+.cta-sub { color:rgba(255,255,255,.7); margin-bottom:36px; line-height:1.8; font-size:1rem; }
+.cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:36px; }
+.cta-info { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; font-size:.85rem; color:rgba(255,255,255,.55); }
+.cta-info span { display:flex; align-items:center; gap:6px; }
+.cta-info a { color:rgba(255,255,255,.55); transition:color .2s; }
+.cta-info a:hover { color:var(--cyan); }
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+footer {
+  background: #020810;
+  border-top: 1px solid rgba(0,212,255,.15);
+  padding: 36px 6%;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+}
+.footer-logo {
+  font-family: var(--font-en); font-size: .95rem; font-weight: 900;
+  background: linear-gradient(90deg, var(--cyan), var(--purple2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(0,212,255,.4));
+}
+.footer-text { font-size:.76rem; color:rgba(255,255,255,.35); }
+
+/* ══════════════════════════════════════════════
+   스크롤 등장 애니메이션
+══════════════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ══════════════════════════════════════════════
+   반응형
+══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero-visual { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-mobile {
+    position: fixed; top: 64px; left: 0; width: 100%; z-index: 400;
+    background: rgba(4,12,24,.98); border-bottom: 1px solid rgba(0,212,255,.15);
+    padding: 20px 6%; flex-direction: column; gap: 16px;
+  }
+  .nav-mobile.open { display: flex; }
+  .nav-mobile a { color: rgba(255,255,255,.8); font-size: 1rem; font-weight: 600; padding: 8px 0; }
+  .intro-grid { grid-template-columns: 1fr; }
+  .exam-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .timeline::before { display: none; }
+  .hero-stats { flex-direction: row; }
+  .cta-box > .holo-inner { padding: 36px 24px; }
+}
+@media (max-width: 480px) {
+  section { padding: 60px 5%; }
+  .features-grid { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; }
+  .stat-card { min-width: unset; }
+  .hero-btns { flex-direction: column; }
+  .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-logo">INCODINGPLUS</div>
+  <ul class="nav-links">
+    <li><a href="#intro">학원소개</a></li>
+    <li><a href="#exam">입시대비</a></li>
+    <li><a href="#course">수업과정</a></li>
+    <li><a href="#features">특징</a></li>
+    <li><a href="#cta">상담문의</a></li>
+  </ul>
+  <button class="nav-cta" onclick="window.open('https://url.kr/pab15b','_blank')">📅 상담 예약</button>
+  <button class="nav-hamburger" id="hamburger" aria-label="메뉴 열기">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<nav class="nav-mobile" id="navMobile">
+  <a href="#intro" onclick="closeMenu()">학원소개</a>
+  <a href="#exam" onclick="closeMenu()">입시대비</a>
+  <a href="#course" onclick="closeMenu()">수업과정</a>
+  <a href="#features" onclick="closeMenu()">특징</a>
+  <a href="#cta" onclick="closeMenu()">상담문의</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">디미고 입시 전문 학원</div>
+
+    <h1 class="hero-title">
+      디미고 합격의 시작,<br>
+      <span class="hl">인코딩플러스</span>
+    </h1>
+
+    <p class="hero-sub">
+      10년간 212명의 합격생이 증명합니다.<br>
+      코딩 · 논술 · 스피치로 AI 시대 기획형 인재를 만듭니다.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-num">212<span class="unit">명</span></div>
+          <div class="stat-label">10년 누적 합격생</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-num">37<span class="unit">명</span></div>
+          <div class="stat-label">26학년도 합격생</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="window.open('https://url.kr/pab15b','_blank')">📅 무료 상담 예약하기</button>
+      <button class="btn-secondary" onclick="window.open('https://blog.naver.com/incodingplus','_blank')">📝 블로그 보기</button>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <!-- viewBox 확대: 노드가 잘리지 않도록 / translate(-30,0)으로 전체 왼쪽 이동 -->
+    <svg viewBox="-270 -240 500 480" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stop-color="#3b82f6" stop-opacity=".18"/>
+          <stop offset="100%" stop-color="#040c18" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stop-color="#00d4ff"/>
+          <stop offset="100%" stop-color="#3b82f6"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="softglow">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <linearGradient id="coreText" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#00d4ff"/>
+          <stop offset="50%"  stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 전체를 왼쪽으로 이동 -->
+      <g transform="translate(-130, 50)">
+
+      <!-- 배경 글로우 -->
+      <circle cx="0" cy="0" r="210" fill="url(#bgGlow)"/>
+
+      <!-- ── 바깥 궤도 링 ── -->
+      <g style="animation:spinSlow 60s linear infinite;transform-origin:0 0">
+        <circle cx="0" cy="0" r="170" fill="none" stroke="rgba(0,212,255,.12)" stroke-width="1"/>
+        <circle cx="170" cy="0"  r="4" fill="#00d4ff" opacity=".7" filter="url(#glow)"/>
+        <circle cx="-170" cy="0" r="3" fill="#a855f7" opacity=".6" filter="url(#glow)"/>
+        <circle cx="0" cy="170"  r="3" fill="#3b82f6" opacity=".6" filter="url(#glow)"/>
+        <circle cx="0" cy="-170" r="4" fill="#00ffcc" opacity=".65" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="170" fill="none"
+          stroke="rgba(0,212,255,.35)" stroke-width="1.5"
+          stroke-dasharray="20 30"
+          style="animation:dashFlow 12s linear infinite"/>
+      </g>
+
+      <!-- ── 중간 궤도 링 ── -->
+      <g style="animation:spinRev 42s linear infinite;transform-origin:0 0">
+        <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(168,85,247,.15)" stroke-width="1"/>
+        <circle cx="120" cy="0"    r="5"   fill="#a855f7" opacity=".8" filter="url(#glow)"/>
+        <circle cx="-85" cy="85"   r="4"   fill="#00d4ff" opacity=".7" filter="url(#glow)"/>
+        <circle cx="42"  cy="-113" r="3.5" fill="#c084fc" opacity=".65" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="120" fill="none"
+          stroke="rgba(168,85,247,.4)" stroke-width="1.5"
+          stroke-dasharray="15 25"
+          style="animation:dashFlow 9s linear infinite"/>
+      </g>
+
+      <!-- ── 안쪽 궤도 링 ── -->
+      <g style="animation:spinSlow 27s linear infinite;transform-origin:0 0">
+        <circle cx="0" cy="0" r="75" fill="none" stroke="rgba(59,130,246,.2)" stroke-width="1"/>
+        <circle cx="75" cy="0"   r="4.5" fill="#3b82f6" opacity=".9" filter="url(#glow)"/>
+        <circle cx="-53" cy="53" r="3.5" fill="#00d4ff" opacity=".8" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="75" fill="none"
+          stroke="rgba(59,130,246,.5)" stroke-width="1.5"
+          stroke-dasharray="12 18"
+          style="animation:dashFlow 7.5s linear infinite"/>
+      </g>
+
+      <!-- ── 연결선 ── -->
+      <line x1="122" y1="68"   x2="50" y2="26"   stroke="rgba(0,212,255,.22)"  stroke-width="1" stroke-dasharray="4 7"/>
+      <line x1="-108" y1="-70" x2="-42" y2="-26" stroke="rgba(168,85,247,.22)" stroke-width="1" stroke-dasharray="4 7"/>
+      <line x1="50"  y1="-118" x2="20"  y2="-46"  stroke="rgba(0,255,204,.18)"  stroke-width="1" stroke-dasharray="4 7"/>
+      <line x1="-125" y1="45"  x2="-48" y2="20"  stroke="rgba(59,130,246,.22)" stroke-width="1" stroke-dasharray="4 7"/>
+
+      <!-- ══ 4개 노드 — 중심에서 나왔다가 바깥 궤도로 왕복 ══ -->
+
+      <!-- AI 노드 — 오른쪽 아래 -->
+      <g style="animation: nodeOrbit1 8s ease-in-out infinite; animation-delay: 0s;">
+        <circle r="50" fill="rgba(0,212,255,.18)" stroke="#00d4ff" stroke-width="2.5" filter="url(#softglow)"/>
+        <circle r="38" fill="rgba(4,12,24,.88)"/>
+        <text x="0" y="-8" text-anchor="middle"
+          fill="#00d4ff" font-size="18" font-weight="900"
+          font-family="'Noto Sans KR',sans-serif"
+          filter="url(#glow)">AI</text>
+        <text x="0" y="13" text-anchor="middle"
+          fill="#ffffff" font-size="13" font-weight="700"
+          font-family="'Noto Sans KR',sans-serif">학습</text>
+      </g>
+
+      <!-- 코딩 노드 — 왼쪽 위 -->
+      <g style="animation: nodeOrbit2 8s ease-in-out infinite; animation-delay: 2s;">
+        <circle r="50" fill="rgba(168,85,247,.18)" stroke="#a855f7" stroke-width="2.5" filter="url(#softglow)"/>
+        <circle r="38" fill="rgba(4,12,24,.88)"/>
+        <text x="0" y="-8" text-anchor="middle"
+          fill="#c084fc" font-size="16" font-weight="900"
+          font-family="monospace"
+          filter="url(#glow)">&lt;/&gt;</text>
+        <text x="0" y="13" text-anchor="middle"
+          fill="#ffffff" font-size="13" font-weight="700"
+          font-family="'Noto Sans KR',sans-serif">코딩</text>
+      </g>
+
+      <!-- DATA 노드 — 오른쪽 위 -->
+      <g style="animation: nodeOrbit3 8s ease-in-out infinite; animation-delay: 4s;">
+        <circle r="50" fill="rgba(0,255,204,.15)" stroke="#00ffcc" stroke-width="2.5" filter="url(#softglow)"/>
+        <circle r="38" fill="rgba(4,12,24,.88)"/>
+        <text x="0" y="-8" text-anchor="middle"
+          fill="#00ffcc" font-size="14" font-weight="900"
+          font-family="monospace"
+          filter="url(#glow)">DATA</text>
+        <text x="0" y="13" text-anchor="middle"
+          fill="#ffffff" font-size="13" font-weight="700"
+          font-family="'Noto Sans KR',sans-serif">분석</text>
+      </g>
+
+      <!-- IT독서 진로탐색 노드 — 왼쪽 -->
+      <g style="animation: nodeOrbit4 8s ease-in-out infinite; animation-delay: 6s;">
+        <circle r="55" fill="rgba(59,130,246,.18)" stroke="#3b82f6" stroke-width="2.5" filter="url(#softglow)"/>
+        <circle r="43" fill="rgba(4,12,24,.88)"/>
+        <text x="0" y="-16" text-anchor="middle"
+          fill="#7dd3fc" font-size="13" font-weight="900"
+          font-family="'Noto Sans KR',sans-serif"
+          filter="url(#glow)">IT독서</text>
+        <text x="0" y="1" text-anchor="middle"
+          fill="#7dd3fc" font-size="13" font-weight="900"
+          font-family="'Noto Sans KR',sans-serif"
+          filter="url(#glow)">진로</text>
+        <text x="0" y="18" text-anchor="middle"
+          fill="#ffffff" font-size="12" font-weight="700"
+          font-family="'Noto Sans KR',sans-serif">탐색</text>
+      </g>
+
+      <!-- ── 스캔라인 ── -->
+      <rect x="-165" y="-2" width="330" height="4" rx="2"
+        fill="url(#bgGlow)" opacity=".35"
+        style="animation:scanLine 4s ease-in-out infinite"/>
+
+      <!-- ── 중심 코어 ── -->
+      <circle cx="0" cy="0" r="70" fill="rgba(0,212,255,.05)" stroke="rgba(0,212,255,.18)" stroke-width="1.5" filter="url(#softglow)"/>
+      <circle cx="0" cy="0" r="60" fill="rgba(4,12,24,.95)" stroke="rgba(0,212,255,.55)" stroke-width="2.5"/>
+      <text x="0" y="-12" text-anchor="middle"
+        fill="url(#coreText)" font-size="13" font-weight="900"
+        font-family="monospace" letter-spacing="1"
+        filter="url(#glow)">INCODING</text>
+      <text x="0" y="6" text-anchor="middle"
+        fill="url(#coreText)" font-size="13" font-weight="900"
+        font-family="monospace" letter-spacing="1"
+        filter="url(#glow)">PLUS</text>
+      <text x="0" y="24" text-anchor="middle"
+        fill="rgba(0,212,255,.75)" font-size="9.5"
+        font-family="'Noto Sans KR',sans-serif">디미고 합격</text>
+      <circle cx="0" cy="0" r="72" fill="none" stroke="rgba(0,212,255,.25)" stroke-width="1.5"
+        style="animation:nodePulse 2s ease-in-out infinite"/>
+
+      <!-- ── 배경 별 파티클 ── -->
+      <circle cx="-180" cy="-60"  r="1.5" fill="#ffffff" opacity=".3" style="animation:nodePulse 3s 0.2s infinite"/>
+      <circle cx="155"  cy="-130" r="1"   fill="#00d4ff" opacity=".4" style="animation:nodePulse 4s 0.8s infinite"/>
+      <circle cx="-55"  cy="175"  r="1.5" fill="#a855f7" opacity=".35" style="animation:nodePulse 3.5s 1.2s infinite"/>
+      <circle cx="170"  cy="95"   r="1"   fill="#ffffff" opacity=".3" style="animation:nodePulse 5s 0.5s infinite"/>
+      <circle cx="-165" cy="125"  r="1.2" fill="#00ffcc" opacity=".3" style="animation:nodePulse 4s 1.8s infinite"/>
+
+      </g><!-- /전체 이동 그룹 끝 -->
+    </svg>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ══ ABOUT US ══ -->
+<section id="intro">
+  <div class="section-label">ABOUT US</div>
+  <h2 class="section-title">AI 시대,<br>기획형 인재를 키웁니다</h2>
+  <p class="section-desc">단순히 코딩을 가르치는 것이 아닙니다. 스스로 진로를 설계하고, 자기 생각을 표현하는 인재를 만듭니다.</p>
+  <div class="intro-grid">
+    <div class="holo-box intro-card ic1 reveal">
+      <div class="holo-inner">
+        <div class="card-icon">💻</div>
+        <div class="card-title">코딩 교육</div>
+        <div class="card-text">파이썬 기반 사고력 증진부터 실전 프로젝트 기획·설계까지. 코딩을 통해 문제를 해결하는 힘을 키웁니다.</div>
+      </div>
+    </div>
+    <div class="holo-box intro-card ic2 reveal" style="transition-delay:.1s">
+      <div class="holo-inner">
+        <div class="card-icon">📖</div>
+        <div class="card-title">논술 교육</div>
+        <div class="card-text">IT 도서로 미래 진로를 설계하고, 기획력과 글쓰기 능력을 동시에 키우는 독서 논술 지도.</div>
+      </div>
+    </div>
+    <div class="holo-box intro-card ic3 reveal" style="transition-delay:.2s">
+      <div class="holo-inner">
+        <div class="card-icon">🎤</div>
+        <div class="card-title">스피치 특강</div>
+        <div class="card-text">말하기를 어려워하는 중학생을 위한 자신감 향상 스피치 특강. 면접과 발표를 자신 있게!</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ══ DIMIGO PREP ══ -->
+<section id="exam">
+  <div class="section-label">DIMIGO PREP</div>
+  <h2 class="section-title">디미고 전 학과<br>맞춤 대비</h2>
+  <p class="section-desc" style="margin-bottom:36px">
+    해킹방어과 · 웹프로그래밍과 · 디지털콘텐츠과 · e-비즈니스과<br>전 학과 대비 가능합니다.
+  </p>
+  <div class="exam-grid">
+    <div class="holo-box exam-card reveal">
+      <div class="holo-inner">
+        <div class="exam-card-title">⭐ 특별전형 대비</div>
+        <div class="exam-item"><span class="check">✓</span><span>개인별 포트폴리오(실적물) 제작 지도</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>실적설명서 작성 (10년 노하우)</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>자기소개서 작성 지도</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>면접 준비 (학과별 맞춤 전략)</span></div>
+      </div>
+    </div>
+    <div class="holo-box exam-card reveal" style="transition-delay:.1s">
+      <div class="holo-inner">
+        <div class="exam-card-title">📋 일반전형 대비</div>
+        <div class="exam-item"><span class="check">✓</span><span>소질적성검사 대비 (다수 기출 보유)</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>면접 기출 질문 (10년치 보유)</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>학과별 맞춤 면접 전략</span></div>
+        <div class="exam-item"><span class="check">✓</span><span>실전 모의고사</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ══ CURRICULUM ══ -->
+<section id="course">
+  <div class="section-label">CURRICULUM</div>
+  <h2 class="section-title">내 아이에게 맞는<br>수업을 찾아보세요</h2>
+  <p class="section-desc">단계별로 이어지는 커리큘럼으로 디미고 합격까지 완주합니다.</p>
+
+  <div class="timeline">
+    <div class="tl-item t1 reveal">
+      <div class="tl-dot">01</div>
+      <div class="holo-box tl-card">
+        <div class="holo-inner">
+          <div class="tl-grade">BASIC · 초6 ~ 중1</div>
+          <div class="tl-name">기초반 — IT 기초 역량 완성</div>
+          <div class="tl-desc">파이썬으로 사고력 UP! 코딩의 기본 원리부터 개인 프로젝트 실습까지, 논리적 사고력과 문제 해결 능력을 배양합니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tl-item t2 reveal" style="transition-delay:.1s">
+      <div class="tl-dot">02</div>
+      <div class="holo-box tl-card">
+        <div class="holo-inner">
+          <div class="tl-grade">MIDDLE · 중2 입시반</div>
+          <div class="tl-name">중급반 — 실전 프로젝트 연습</div>
+          <div class="tl-desc">실전 프로젝트 연습으로 입시를 준비합니다. 포트폴리오(실적물) 기획부터 제작까지 본격 훈련을 시작합니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tl-item t3 reveal" style="transition-delay:.2s">
+      <div class="tl-dot">03</div>
+      <div class="holo-box tl-card">
+        <div class="holo-inner">
+          <div class="tl-grade">ADVANCED · 중3 입시반</div>
+          <div class="tl-name">심화반 — 특성화고 입시 전략 트레이닝</div>
+          <div class="tl-desc">디미고, 선린고, 단대소고 등 명문 특성화고 합격을 위한 실적물 제작 및 면접 밀착 트레이닝이 진행됩니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tl-item t4 reveal" style="transition-delay:.3s">
+      <div class="tl-dot">04</div>
+      <div class="holo-box tl-card">
+        <div class="holo-inner">
+          <div class="tl-grade">AI · 고1 ~ 일반</div>
+          <div class="tl-name">AI실무반 — 심화 및 AI 실무 교육</div>
+          <div class="tl-desc">최신 AI 기술 활용 및 자료구조, 알고리즘 심화 과정을 통해 대학 입시 및 개발 실무 역량을 강화합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ══ WHY US ══ -->
+<section id="features">
+  <div class="section-label">WHY US</div>
+  <h2 class="section-title">인코딩플러스가<br>다른 이유</h2>
+  <div class="features-grid">
+    <div class="holo-box feature-item reveal">
+      <div class="holo-inner"><div class="feature-icon">🎓</div><div><div class="feature-title">디미고 출신 선생님</div><div class="feature-desc">직접 경험한 생생한 입시 정보를 전달합니다.</div></div></div>
+    </div>
+    <div class="holo-box feature-item reveal" style="transition-delay:.07s">
+      <div class="holo-inner"><div class="feature-icon">🧭</div><div><div class="feature-title">30년 진로·입시 전문가</div><div class="feature-desc">학생별 강점을 파악한 맞춤 진학 상담.</div></div></div>
+    </div>
+    <div class="holo-box feature-item reveal" style="transition-delay:.14s">
+      <div class="holo-inner"><div class="feature-icon">🧩</div><div><div class="feature-title">개인 맞춤 지도</div><div class="feature-desc">학생 개인의 특성과 학과에 맞는 1:1 지도.</div></div></div>
+    </div>
+    <div class="holo-box feature-item reveal" style="transition-delay:.21s">
+      <div class="holo-inner"><div class="feature-icon">🌱</div><div><div class="feature-title">자기주도 진로탐색</div><div class="feature-desc">떠먹여 주지 않고, 스스로 진로를 찾아가도록 지도합니다.</div></div></div>
+    </div>
+    <div class="holo-box feature-item reveal" style="transition-delay:.28s">
+      <div class="holo-inner"><div class="feature-icon">👩‍💻</div><div><div class="feature-title">코딩 + 논술 투트랙</div><div class="feature-desc">코딩 전문 강사 + 논술 전문 강사 2인 체제.</div></div></div>
+    </div>
+    <div class="holo-box feature-item reveal" style="transition-delay:.35s">
+      <div class="holo-inner"><div class="feature-icon">🏆</div><div><div class="feature-title">검증된 합격 커리큘럼</div><div class="feature-desc">10년간 매년 합격생을 배출한 실증된 프로그램.</div></div></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ══ CTA ══ -->
+<section id="cta">
+  <div class="holo-box cta-box reveal">
+    <div class="holo-inner">
+      <h2 class="cta-title">지금 무료 상담을<br>예약하세요</h2>
+      <p class="cta-sub">
+        디미고 입시, 혼자 준비하지 마세요.<br>
+        10년의 노하우로 함께 합격을 만들겠습니다.
+      </p>
+      <div class="cta-btns">
+        <button class="btn-primary" onclick="window.open('https://url.kr/pab15b','_blank')">📅 상담 예약하기</button>
+        <button class="btn-secondary" onclick="window.open('https://blog.naver.com/incodingplus','_blank')">📝 블로그 보기</button>
+      </div>
+      <div class="cta-info">
+        <span>📞 <a href="tel:031-8042-2391">031-8042-2391</a></span>
+        <span>📱 <a href="tel:010-2838-2391">010-2838-2391</a></span>
+        <span>📍 경기도 안산시 단원구 광덕동로 41, 3층</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-logo">INCODINGPLUS</div>
+  <div class="footer-text">경기도 안산시 단원구 광덕동로 41, 3층 | 031-8042-2391</div>
+  <div class="footer-text">© 2026 인코딩플러스. All rights reserved.</div>
+</footer>
+
+<script>
+/* ══ stat-card(212명·37명) — 페이지 열자마자 즉시 순환 시작 ══ */
+(function() {
+  var statCards = document.querySelectorAll('.stat-card');
+  if (!statCards.length) return;
+  var idx = 0, prev = null;
+  function activateStat() {
+    if (prev) prev.classList.remove('holo-glow');
+    prev = statCards[idx % statCards.length];
+    prev.classList.add('holo-glow');
+    idx++;
+  }
+  activateStat();                      /* 즉시 첫 카드 활성화 */
+  setInterval(activateStat, 3000);     /* 이후 3초마다 순환 */
+})();
+
+/* ══ 햄버거 메뉴 ══ */
+function closeMenu() {
+  document.getElementById('navMobile').classList.remove('open');
+}
+document.getElementById('hamburger').addEventListener('click', function() {
+  document.getElementById('navMobile').classList.toggle('open');
+});
+
+/* ══ 스크롤 등장 ══ */
+const revealObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  revealObs.observe(el);
+});
+
+/* ══ 파티클 ══ */
+var COLORS = ['#00d4ff','#38bdf8','#a855f7','#c084fc','#7dd3fc','#00ffcc'];
+function spawnDot() {
+  var dot = document.createElement('div');
+  dot.className = 'holo-dot';
+  var size = Math.random() * 4 + 2;
+  dot.style.cssText =
+    'width:' + size + 'px;' +
+    'height:' + size + 'px;' +
+    'left:' + (Math.random() * 100) + 'vw;' +
+    'bottom:' + (Math.random() * 15) + 'vh;' +
+    'background:' + COLORS[Math.floor(Math.random() * COLORS.length)] + ';' +
+    'animation-duration:' + (Math.random() * 3 + 3) + 's;' +
+    'animation-delay:' + (Math.random() * 1) + 's;' +
+    'box-shadow:0 0 ' + (size * 2) + 'px currentColor;';
+  document.body.appendChild(dot);
+  setTimeout(function() { dot.remove(); }, 7000);
+}
+setInterval(spawnDot, 380);
+
+/* ══ NAV 스크롤 활성 링크 ══ */
+var sections = ['hero','intro','exam','course','features','cta'];
+var navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', function() {
+  var cur = '';
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 80) cur = id;
+  });
+
+/* ══ 뷰포트 내 holo-box 5초마다 순차 자동 활성화 ══ */
+(function() {
+  var glowTimer = null;
+  var glowIdx   = 0;
+  var activeBox = null;
+
+  function getVisibleBoxes() {
+    return Array.from(document.querySelectorAll('.holo-box, .stat-card')).filter(function(el) {
+      var r = el.getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    });
+  }
+
+  function activateNext() {
+    /* 이전 박스 해제 */
+    if (activeBox) activeBox.classList.remove('holo-glow');
+
+    var boxes = getVisibleBoxes();
+    if (!boxes.length) return;
+
+    glowIdx   = glowIdx % boxes.length;
+    activeBox = boxes[glowIdx];
+    activeBox.classList.add('holo-glow');
+    glowIdx++;
+  }
+
+  /* 5초마다 순차 실행 */
+  function startCycle() {
+    activateNext();
+    glowTimer = setInterval(activateNext, 3000);
+  }
+
+  /* 스크롤하면 현재 뷰포트 기준으로 인덱스 리셋 */
+  var scrollDebounce;
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollDebounce);
+    scrollDebounce = setTimeout(function() {
+      glowIdx = 0;
+    }, 300);
+  }, { passive: true });
+
+  startCycle();
+})();
+  navLinks.forEach(function(a) {
+    a.style.color = a.getAttribute('href') === '#' + cur
+      ? 'var(--cyan)' : 'rgba(255,255,255,.75)';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
